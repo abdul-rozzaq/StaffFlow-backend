@@ -70,6 +70,8 @@ class Employee(AbstractBaseUser, PermissionsMixin):
 
     date_joined = models.DateTimeField(auto_now_add=True)
 
+    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    
     objects = EmployeeManager()
 
     USERNAME_FIELD = "phone_number"
