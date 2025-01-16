@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Company, Employee, Request, RequestImage
+from .models import Company, Department, Employee, News, Request, RequestImage
 
 
 class EmployeeSerializer(serializers.ModelSerializer):
@@ -84,6 +84,15 @@ class RequestImageSerializer(serializers.ModelSerializer):
 class StirAuthenticationSerializer(serializers.Serializer):
     stir = serializers.CharField()
 
+
 class PhoneNumberOTPSerializer(serializers.Serializer):
     phone_number = serializers.CharField()
     otp = serializers.IntegerField()
+
+
+class NewsSerializer(serializers.ModelSerializer):
+    department = serializers.IntegerField(source="department_id", read_only=True)
+
+    class Meta:
+        model = News
+        fields = "__all__"

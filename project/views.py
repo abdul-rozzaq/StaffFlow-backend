@@ -7,8 +7,8 @@ from rest_framework.decorators import api_view
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
-from .models import OTP, Company, Employee, Request, RequestImage
-from .permissions import CompanyIsAuthenticated
+from .models import OTP, Company, Employee, News, Request, RequestImage
+from .permissions import CompanyIsAuthenticated, IsAdminOrReadOnly
 from .serializers import *
 from .utils import generate_token_for_company, send_otp_code
 
@@ -97,8 +97,11 @@ class CompanyAuthenticationViewSet(viewsets.GenericViewSet):
         )
 
 
-@api_view(["GET"])
-@decorators.permission_classes([CompanyIsAuthenticated])
-def test(request):
-    print(request.company)
-    return Response({"message": "success"})
+class NewsViewSet(viewsets.ModelViewSet):
+    queryset = News.objects.all()
+    serializer_class = NewsSerializer
+    permission_classes = [IsAdminOrReadOnly]
+    parser_classes = [FormParser, MultiPartParser]
+
+    def perform_create(self, serializer):
+        return serializer.save(department=self.request.user.department)

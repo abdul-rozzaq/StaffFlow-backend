@@ -71,7 +71,7 @@ class Employee(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(auto_now_add=True)
 
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
-    
+
     objects = EmployeeManager()
 
     USERNAME_FIELD = "phone_number"
@@ -85,6 +85,7 @@ class Employee(AbstractBaseUser, PermissionsMixin):
 
 
 class Company(models.Model):
+    department = models.ForeignKey(Department, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     stir = models.CharField(max_length=64)
     phone_number = models.CharField(max_length=13, null=True, blank=True, default=None)
@@ -154,3 +155,13 @@ class CompanyToken(models.Model):
 
     def __str__(self):
         return f"Token for {self.company.name}"
+
+
+class News(models.Model):
+    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to="news-images/", null=True, blank=True)
+    title = models.CharField(max_length=512)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.title

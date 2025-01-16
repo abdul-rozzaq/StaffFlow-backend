@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import OTP, Company, Department, Employee, Request, RequestImage
+from .models import OTP, Company, Department, Employee, News, Request, RequestImage
 
 
 @admin.register(Employee)
@@ -12,7 +12,7 @@ class EmployeeAdmin(UserAdmin):
 
     fieldsets = (
         (None, {"fields": ("phone_number", "password")}),
-        ("Personal Info", {"fields": ("first_name", "last_name", "image", "region", "district", "role", "passport")}),
+        ("Personal Info", {"fields": ("first_name", "last_name", "image", "region", "district", "role", "passport", "department")}),
         ("Permissions", {"fields": ("is_active", "is_staff", "is_superuser", "groups", "user_permissions")}),
         ("Important Dates", {"fields": ("last_login",)}),
     )
@@ -79,3 +79,8 @@ class OTPAdmin(admin.ModelAdmin):
 @admin.register(Department)
 class DepartmentAdmin(admin.ModelAdmin):
     list_display = ["pk", "name", "region", "district"]
+
+
+@admin.register(News)
+class NewsAdmin(admin.ModelAdmin):
+    list_display = ["pk", "title", "department"]
