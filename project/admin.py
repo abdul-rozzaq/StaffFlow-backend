@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import OTP, Company, Department, Employee, News, Request, RequestImage
+from .models import OTP, Company, CompanyToken, CompanyType, Department, Employee, News, Request, RequestImage
 
 
 @admin.register(Employee)
@@ -35,7 +35,7 @@ class RequestImageInline(admin.TabularInline):
 
 @admin.register(Request)
 class RequestAdmin(admin.ModelAdmin):
-    list_display = ["pk", "company", "employee", "priority", "description", "long", "lat", "status", "get_images_count"]
+    list_display = ["pk", "company", "uploader", "performer", "priority", "description", "long", "lat", "status", "get_images_count"]
     inlines = [RequestImageInline]
     list_display_links = ["pk", "company"]
 
@@ -54,7 +54,7 @@ class CompanyAdmin(admin.ModelAdmin):
 
 @admin.register(OTP)
 class OTPAdmin(admin.ModelAdmin):
-    list_display = ["id", "company", "code", "phone_number", "is_active"]
+    list_display = ["id", "company", "code", "phone_number", "is_active", "created_at"]
     actions = ["clear_expired_otp"]
 
     def phone_number(self, obj):
@@ -84,3 +84,13 @@ class DepartmentAdmin(admin.ModelAdmin):
 @admin.register(News)
 class NewsAdmin(admin.ModelAdmin):
     list_display = ["pk", "title", "department"]
+
+
+@admin.register(CompanyToken)
+class CompanyTokenAdmin(admin.ModelAdmin):
+    list_display = ["pk", "company", "key"]
+
+
+@admin.register(CompanyType)
+class CompanyTypeAdmin(admin.ModelAdmin):
+    list_display = ["pk", "name"]

@@ -1,6 +1,13 @@
 from rest_framework import serializers
 
-from .models import Company, Department, Employee, News, Request, RequestImage
+from .models import Company, CompanyType, Department, Employee, News, Request, RequestImage
+
+
+class DepartmentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Department
+        fields = "__all__"
 
 
 class EmployeeSerializer(serializers.ModelSerializer):
@@ -30,25 +37,39 @@ class EmployeeSerializer(serializers.ModelSerializer):
         return employee
 
 
+class CompanyTypeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = CompanyType
+        fields = "__all__"
+
+
 class CompanySerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Company
-        fields = ["id", "name", "stir", "status", "region", "district", "phone_number"]
+        fields = ["id", "name", "stir", "status", "region", "district", "phone_number", "company_type", "department"]
+
+    def to_representation(self, instance: Company):
+        data = super().to_representation(instance)
+
+        data["department"] = DepartmentSerializer(instance.department).data
+        data["company_type"] = CompanyTypeSerializer(instance.company_type).data
+
+        return data
 
 
 class RequestSerializer(serializers.ModelSerializer):
     images = serializers.ListField(child=serializers.ImageField(allow_empty_file=False), write_only=True, required=True)
     company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all())
-    employee = EmployeeSerializer(read_only=True)
+    uploader = EmployeeSerializer(read_only=True)
+    performer = EmployeeSerializer(read_only=True)
 
     class Meta:
         model = Request
-        fields = ["id", "employee", "company", "priority", "description", "long", "lat", "file", "images", "status"]
+        fields = ["id", "uploader", "performer", "company", "priority", "description", "long", "lat", "file", "images", "status"]
 
     def create(self, validated_data):
-        request = self.context["request"]
-        validated_data["employee"] = request.user
-
         images = validated_data.pop("images")
         created_request = super().create(validated_data)
 

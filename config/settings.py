@@ -12,6 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-c^^#r1_io2bbj+iy=bc5t7*vngl)_^=6nk0)$napacv3x50v9-"
 
 DEBUG = env.bool("DEBUG", default=False)
+BOT_TOKEN = env.str("BOT_TOKEN")
 
 ALLOWED_HOSTS = ["*"]
 CORS_ALLOW_ALL_ORIGINS = True
@@ -80,6 +81,27 @@ TEMPLATES = [
         },
     },
 ]
+
+SWAGGER_SETTINGS = {
+    "SECURITY_DEFINITIONS": {
+        "Basic": {
+            "type": "basic",
+        },
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+        },
+    },
+    "USE_SESSION_AUTH": False,
+    "JSON_EDITOR": True,
+    "UILayout": "SwaggerUI",
+    "SWAGGER_UI_DIST": "https://cdn.jsdelivr.net/npm/swagger-ui-dist@3.41.1/",
+    "SWAGGER_UI_SETTINGS": {
+        "theme": "dark",  # Qora rejimni tanlash
+    },
+}
+
 
 WSGI_APPLICATION = "config.wsgi.application"
 

@@ -2,7 +2,8 @@ import hashlib
 import uuid
 from datetime import timedelta
 
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
+                                        PermissionsMixin)
 from django.db import models
 from django.utils.timezone import now
 
@@ -84,6 +85,13 @@ class Employee(AbstractBaseUser, PermissionsMixin):
         return self.full_name()
 
 
+class CompanyType(models.Model):
+    name = models.CharField(max_length=128)
+
+    def __str__(self):
+        return self.name
+
+
 class Company(models.Model):
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
@@ -94,13 +102,17 @@ class Company(models.Model):
     region = models.CharField(max_length=128)
     district = models.CharField(max_length=128)
 
+    company_type = models.ForeignKey(CompanyType, on_delete=models.PROTECT)
+
     def __str__(self) -> str:
         return self.name
 
 
 class Request(models.Model):
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name="requests")
-    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    uploader = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name="uploaded_requests", null=True, blank=True)
+    performer = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name="performing_requests", null=True, blank=True)
+
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="requests")
     priority = models.IntegerField()
     description = models.TextField()
     long = models.CharField(max_length=256)
