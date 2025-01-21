@@ -38,6 +38,7 @@ class RequestAdmin(admin.ModelAdmin):
     list_display = ["pk", "company", "uploader", "performer", "priority", "description", "long", "lat", "status", "get_images_count"]
     inlines = [RequestImageInline]
     list_display_links = ["pk", "company"]
+    list_editable = ["uploader", "performer"]
 
     def get_images_count(self, obj):
         return obj.images.all().count()

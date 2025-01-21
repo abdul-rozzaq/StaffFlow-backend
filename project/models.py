@@ -2,8 +2,7 @@ import hashlib
 import uuid
 from datetime import timedelta
 
-from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
-                                        PermissionsMixin)
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.utils.timezone import now
 
@@ -130,7 +129,7 @@ class Request(models.Model):
     )
 
     def __str__(self):
-        return self.employee.full_name()
+        return self.company.name
 
 
 class RequestImage(models.Model):

@@ -18,11 +18,13 @@ class EmployeeViewSet(viewsets.ModelViewSet):
     queryset = Employee.objects.all().order_by("id")
     serializer_class = EmployeeSerializer
     permission_classes = [permissions.IsAdminUser]
-    # parser_classes = [FormParser, MultiPartParser]
 
     @decorators.action(methods=["GET"], detail=False, permission_classes=[permissions.IsAuthenticated])
     def get_me(self, request, *args, **kwargs):
         return Response(self.get_serializer(self.request.user).data, status=status.HTTP_200_OK)
+
+    def perform_create(self, serializer):
+        return serializer.save(department=self.request.user.department)
 
 
 class CompanyViewSet(viewsets.ModelViewSet):

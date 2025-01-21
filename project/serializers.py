@@ -12,10 +12,11 @@ class DepartmentSerializer(serializers.ModelSerializer):
 
 class EmployeeSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    department = DepartmentSerializer(read_only=True)
 
     class Meta:
         model = Employee
-        fields = ["id", "image", "first_name", "last_name", "role", "phone_number", "region", "district", "password", "passport", "image"]
+        fields = ["id", "image", "first_name", "last_name", "role", "phone_number", "region", "district", "password", "passport", "image", "department"]
 
     def create(self, validated_data):
         employee: Employee = super().create(validated_data)
