@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from .models import Company, CompanyType, Department, Employee, News, Request, RequestImage
+from .models import (Company, CompanyType, Department, Employee, News, Request,
+                     RequestImage)
 
 
 class DepartmentSerializer(serializers.ModelSerializer):
@@ -70,6 +71,14 @@ class RequestSerializer(serializers.ModelSerializer):
         model = Request
         fields = ["id", "uploader", "performer", "company", "priority", "description", "long", "lat", "file", "images", "status"]
 
+    def __init__(self, *args, **kwargs):
+        self.exclude_fields = kwargs.pop("exclude_fields", [])
+        super().__init__(*args, **kwargs)
+
+        if self.exclude_fields:
+            for field in self.exclude_fields:
+                self.fields.pop(field)
+
     def create(self, validated_data):
         images = validated_data.pop("images")
         created_request = super().create(validated_data)
@@ -92,7 +101,10 @@ class RequestSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         serialized_data = super().to_representation(instance)
-        serialized_data["company"] = CompanySerializer(instance.company).data
+
+        if "company" not in self.exclude_fields:
+            serialized_data["company"] = CompanySerializer(instance.company, context=self.context).data
+
         serialized_data["images"] = [self.context["request"].build_absolute_uri(img.image.url) for img in instance.images.all()]
         return serialized_data
 

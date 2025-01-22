@@ -9,8 +9,7 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
 from .models import OTP, Company, Employee, News, Request, RequestImage
-from .permissions import (CompanyIsAuthenticated, CompanyOrRequestUser,
-                          IsAdminOrReadOnly)
+from .permissions import CompanyIsAuthenticated, CompanyOrRequestUser, IsAdminOrReadOnly
 from .serializers import *
 from .utils import generate_token_for_company, send_otp_code
 
@@ -116,7 +115,7 @@ class CompanyAuthenticationViewSet(viewsets.GenericViewSet):
     def requests(self, request, *args, **kwargs):
         queryset = request.company.requests.all()
 
-        return Response(RequestSerializer(queryset, many=True, context={"request": request}).data, status=status.HTTP_200_OK)
+        return Response(RequestSerializer(queryset, many=True, context={"request": request}, exclude_fields=["company"]).data, status=status.HTTP_200_OK)
 
 
 class NewsViewSet(viewsets.ModelViewSet):
