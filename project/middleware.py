@@ -14,7 +14,7 @@ class CompanyMiddleware(MiddlewareMixin):
                 company = Company.objects.get(pk=token_obj.company_id)
 
                 request.company = company
-            except (CompanyToken.DoesNotExist, Company.DoesNotExist):
+            except (CompanyToken.DoesNotExist, Company.DoesNotExist, IndexError):
                 request.company = None
         else:
             request.company = None
