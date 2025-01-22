@@ -50,6 +50,7 @@ class CompanyAuthenticationViewSet(viewsets.GenericViewSet):
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
     pagination_class = None
+    permission_classes = [permissions.AllowAny]
 
     def get_serializer_class(self):
         serializer_classes = {
