@@ -51,6 +51,7 @@ class CompanyAuthenticationViewSet(viewsets.GenericViewSet):
     serializer_class = CompanySerializer
     pagination_class = None
     permission_classes = [permissions.AllowAny]
+    authentication_classes = []
 
     def get_serializer_class(self):
         serializer_classes = {
