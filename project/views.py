@@ -3,10 +3,13 @@ import random
 from django.contrib.auth.models import AnonymousUser
 from django.shortcuts import get_object_or_404, render
 from django.utils.timezone import now
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import decorators, mixins, permissions, status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
+
+from project.swagger_serializers import EmployeeIdSerializer
 
 from .models import OTP, Company, Employee, News, Request, RequestImage
 from .permissions import CompanyIsAuthenticated, CompanyOrRequestUser, IsAdminOrReadOnly
@@ -44,6 +47,22 @@ class RequestsViewSet(viewsets.ModelViewSet):
         uploader = self.request.user if not isinstance(self.request.user, AnonymousUser) else None
 
         return serializer.save(uploader=uploader)
+
+    @swagger_auto_schema(method="put", request_body=EmployeeIdSerializer, responses={200: RequestSerializer})
+    @decorators.action(["PUT"], detail=True)
+    def assign(self, request, *args, **kwargs):
+
+        employee_id = request.data.get("employee_id")
+
+        employee = get_object_or_404(Employee, pk=employee_id)
+
+        request = self.get_object()
+        request.performer = employee
+        request.save()
+
+        serializer = self.get_serializer(request)
+
+        return Response(serializer.data)
 
 
 class CompanyAuthenticationViewSet(viewsets.GenericViewSet):
